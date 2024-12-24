@@ -1,0 +1,54 @@
+﻿
+The "LoadBalancingPolicy" in YARP (Yet Another Reverse Proxy) specifies the strategy used to distribute incoming requests across multiple destinations (servers) within a cluster. It defines how YARP selects the backend server to forward a request when there are multiple options available.
+
+Supported Load Balancing Policies
+First (Prioritization)
+
+Always selects the first healthy destination in the list.
+If the first destination becomes unhealthy, it falls back to the next one.
+Suitable for scenarios where one server should always handle traffic unless it is down.
+Example:
+
+Destination 1: First choice.
+Destination 2: Used only if Destination 1 is unhealthy.
+RoundRobin (Equal Distribution)
+
+Distributes requests evenly across all healthy destinations.
+Useful for evenly balancing the load across servers.
+Example:
+
+Request 1 → Destination 1
+Request 2 → Destination 2
+Request 3 → Destination 1 (and so on).
+PowerOfTwoChoices (Load Awareness)
+
+Randomly selects two destinations and forwards the request to the one with the least load.
+Effective in scenarios with high traffic where load-based decisions are necessary.
+LeastRequests (Dynamic Balancing)
+
+Sends requests to the destination with the fewest active requests.
+Best for scenarios where server load varies dynamically, and you want to minimize congestion.
+How to Configure "LoadBalancingPolicy"
+In appsettings.json, you set the policy at the cluster level under the Clusters configuration.
+
+Example: RoundRobin Policy
+json
+Copy code
+"Clusters": {
+  "cluster1": {
+    "LoadBalancingPolicy": "RoundRobin",
+    "Destinations": {
+      "app1": { "Address": "http://192.168.8.124:8181/" },
+      "app2": { "Address": "http://192.168.8.124:8282/" }
+    }
+  }
+}
+
+
+When to Use Each Policy
+Policy	Use Case
+
+First	Prioritize one destination and use others as backups.
+RoundRobin	Distribute traffic equally among destinations.
+PowerOfTwoChoices	Minimize load on individual servers in high-traffic environments.
+LeastRequests	Ideal for dynamic workloads where some servers are more loaded than others.
