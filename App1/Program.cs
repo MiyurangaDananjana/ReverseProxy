@@ -5,6 +5,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add health checks services
+builder.Services.AddHealthChecks();
 
 // Add JWT authentication
 builder.Services.AddAuthentication(options =>
@@ -46,6 +48,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Middleware for health checks
+app.UseHealthChecks("/health");
 
 // Enable authentication and authorization
 app.UseAuthentication();
