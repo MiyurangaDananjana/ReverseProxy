@@ -8,3 +8,8 @@
 /App1/obj
 /App1/Properties/PublishProfiles
 /.vs/ReverseProxy/v17
+/App1/.vscode
+/.vs/ReverseProxy/config
+/.vs/ReverseProxy/DesignTimeBuild
+/.vs/ReverseProxy/FileContentIndex
+/.vs/ProjectEvaluation
