@@ -1,0 +1,2 @@
+docker build -t app1:latest .
+docker run -d -p 8080:8080 --name app1-container app1:latest
