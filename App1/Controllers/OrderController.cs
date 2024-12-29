@@ -1,4 +1,4 @@
-﻿using App1.Model;
+﻿using App1.Model.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ namespace App1.Controllers
 {
     [Route("api/orders")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class OrderController : ControllerBase
     {
         private static readonly List<OrderModel> _orders = new List<OrderModel>()

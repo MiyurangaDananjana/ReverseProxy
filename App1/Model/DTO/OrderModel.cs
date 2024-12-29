@@ -1,4 +1,4 @@
-﻿namespace App1.Model
+﻿namespace App1.Model.DTO
 {
     public class OrderModel
     {

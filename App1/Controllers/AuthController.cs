@@ -1,6 +1,8 @@
-﻿using App1.Helper;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.Http;
+﻿using App1.Data.Repositories.Interfaces;
+using App1.Helper;
+using App1.Model.DTO;
+using App1.Model.Entity;
+using App1.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -13,9 +15,17 @@ namespace App1.Controllers
 
         private readonly IConfiguration _configuration;
 
-        public AuthController(IConfiguration configuration)
+        private readonly ILogger _logger;   
+
+        private readonly IUserRepositories _userRepositories;
+
+        private readonly IUserService _userService;
+
+        public AuthController(IConfiguration configuration, IUserRepositories userRepositories, IUserService userService)
         {
             _configuration = configuration;
+            _userRepositories = userRepositories;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -32,7 +42,8 @@ namespace App1.Controllers
                 userId: "12345",
                 key: key,
                 issuer: issuer,
-                audience: audience
+                audience: audience,
+                role : "admin"
             );
 
             return Ok(token);
@@ -62,6 +73,49 @@ namespace App1.Controllers
             else
             {
                 return Ok("Invalid token.");
+            }
+        }
+
+        [HttpPost("login-admin")]
+        public IActionResult Login(User user)
+        {
+            if (string.IsNullOrEmpty(user.UserName) || string.IsNullOrEmpty(user.UserName))
+            {
+                return BadRequest("Username and password are required.");
+            }
+
+            var  verifyUser = _userService.ValidateCredentials(user.UserName, user.Password);
+
+            if (verifyUser)
+            {
+                // Fetch key, issuer, and audience from configuration
+                var key = _configuration["Jwt:Key"];
+                var issuer = _configuration["Jwt:Issuer"];
+                var audience = _configuration["Jwt:Audience"];
+
+                UserDTO userDetails = _userRepositories.GetUserDetailsByUsername(user.UserName);
+
+                EncryptionHelper encryptionHelper = new EncryptionHelper();
+
+                // Generate JWT token
+                var token = JwtTokenHelper.GenerateJwtToken(
+                    userId: encryptionHelper.Encrypt(userDetails.Id.ToString()),
+                    key: key,
+                    issuer: issuer,
+                    audience: audience,
+                    role : userDetails.UserRole.ToString()
+                );
+
+                // Generate token, session, or any necessary data
+                return Ok(new
+                {
+                    Message = "Success!",
+                    Token = token // Generate JWT token (hypothetical method)
+                });
+            }
+            else
+            {
+                return Unauthorized("Invalid username or password.");
             }
         }
     }

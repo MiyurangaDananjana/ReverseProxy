@@ -7,7 +7,7 @@ namespace App1.Helper
 {
     public static class JwtTokenHelper
     {
-        public static string GenerateJwtToken(string userId, string key, string issuer, string audience)
+        public static string GenerateJwtToken(string userId, string key, string issuer, string audience,string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.UTF8.GetBytes(key);
@@ -17,7 +17,7 @@ namespace App1.Helper
                 Subject = new ClaimsIdentity(new[]
                 {
                 new Claim(ClaimTypes.NameIdentifier, userId),
-                new Claim(ClaimTypes.Role, "User") 
+                new Claim(ClaimTypes.Role, role) 
             }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 Issuer = issuer,
@@ -51,7 +51,7 @@ namespace App1.Helper
             }
             catch
             {
-                return null; // Token is invalid
+                return null;
             }
         }
     }

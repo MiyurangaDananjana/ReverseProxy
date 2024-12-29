@@ -1,4 +1,4 @@
-﻿using App1.Model;
+﻿using App1.Model.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,7 @@ namespace App1.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IConnectionMultiplexer _redis;
